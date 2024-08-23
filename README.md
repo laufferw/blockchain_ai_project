@@ -49,3 +49,13 @@ We have successfully built the first version of our blockchain ledger, integrati
 2. **Install Necessary Libraries**
    ```bash
    pip install Flask requests scikit-learn pandas numpy
+3. **Run the Application**
+* Navigate to the project directory.
+Start the Flask server:
+    ```bash
+    python app.py
+4. Interact with the API
+* Submit Data: Use Postman or a web browser to submit content to 
+`http://localhost:5000/submit`.
+* View Blockchain: Access the current blockchain ledger at 
+`http://localhost:5000/chain`.
