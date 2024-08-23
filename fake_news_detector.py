@@ -19,12 +19,18 @@ class FakeNewsDetector:
             'label': [0, 1, 0, 1]  # 0 for real, 1 for fake
         }
 
-        # Add the misclassified transcript to the training data
-        data['text'].append("Full transcript of the presidential speech")
-        data['label'].append(0)  # Label it as real
+        # Load the speech transcript from the text file
+        with open('speech_transcript.txt', 'r') as file:
+            speech_text = file.read()
 
+        # Add the speech transcript to the training data
+        data['text'].append(speech_text)
+        data['label'].append(0)  # Label it as real content
+
+        # Create a DataFrame from the data dictionary
         df = pd.DataFrame(data)
 
+        # Create and train the model
         model = make_pipeline(TfidfVectorizer(), MultinomialNB())
         model.fit(df['text'], df['label'])
 
