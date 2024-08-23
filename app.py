@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template
 from blockchain import Blockchain
 from fake_news_detector import FakeNewsDetector
 
@@ -6,6 +6,10 @@ app = Flask(__name__)
 
 blockchain = Blockchain()
 detector = FakeNewsDetector()
+
+@app.route('/')
+def index():
+    return render_template('index.html')
 
 @app.route('/submit', methods=['POST'])
 def submit_data():
