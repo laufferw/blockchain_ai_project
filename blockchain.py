@@ -26,9 +26,12 @@ class Blockchain:
         self.current_data.append({
             'author': author,
             'content': content,
-            'verification': verification,
+            'verification': {
+                'result': verification,
+                'confidence_score': self.detector.get_confidence_score(content),
+                'timestamp': time()
+            }
         })
-        return self.last_block['index'] + 1
 
     @staticmethod
     def hash(block):
