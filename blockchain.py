@@ -3,7 +3,8 @@ import json
 from time import time
 
 class Blockchain:
-    def __init__(self):
+    def __init__(self, detector):
+        self.detector = detector
         self.chain = []
         self.current_data = []
 

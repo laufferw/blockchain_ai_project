@@ -2,10 +2,12 @@ from flask import Flask, request, jsonify, render_template
 from blockchain import Blockchain
 from fake_news_detector import FakeNewsDetector
 
+
+
 app = Flask(__name__)
-# At the top of your app.py where you initialize your objects
-detector = FakeNewsDetector()
-blockchain = Blockchain(detector=detector)  # Pass the detector to Blockchain
+# Initialize components
+detector = Detector()  # Make sure this is properly imported
+blockchain = Blockchain(detector=detector)
 @app.route('/')
 def index():
     return render_template('index.html')
