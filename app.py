@@ -46,3 +46,39 @@ def full_chain():
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5001)
+
+from flask_swagger_ui import get_swaggerui_blueprint
+
+SWAGGER_URL = '/api/docs'
+API_URL = '/static/swagger.json'
+
+swagger_ui_blueprint = get_swaggerui_blueprint(
+    SWAGGER_URL,
+    API_URL,
+    config={
+        'app_name': "Fake News Detection API"
+    }
+)
+
+app.register_blueprint(swagger_ui_blueprint, url_prefix=SWAGGER_URL)
+
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
+
+limiter = Limiter(
+    app,
+    key_func=get_remote_address,
+    default_limits=["100 per day", "10 per hour"]
+)
+
+@app.route('/api/key', methods=['POST'])
+def generate_api_key():
+    values = request.get_json()
+    if 'email' not in values:
+        return jsonify({'error': 'Please provide email'}), 400
+    api_key = generate_unique_key()  # Implement this function
+    return jsonify({'api_key': api_key}), 201
+
+from flask_cors import CORS
+
+CORS(app)
