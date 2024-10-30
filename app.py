@@ -82,3 +82,23 @@ def generate_api_key():
 from flask_cors import CORS
 
 CORS(app)
+
+from news_collector import NewsCollector
+
+news_collector = NewsCollector()
+
+@app.route('/collect', methods=['POST'])
+def collect_news():
+    try:
+        articles = news_collector.collect_articles()
+        for article in articles:
+            verification = detector.predict(article['content'])
+            blockchain.new_data(article['author'], article['content'], verification)
+        
+        response = {
+            'message': f'Collected and processed {len(articles)} articles',
+            'articles_count': len(articles)
+        }
+        return jsonify(response), 201
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
