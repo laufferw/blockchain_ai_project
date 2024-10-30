@@ -110,5 +110,4 @@ def collect_news():
 import os
 os.environ['FLASK_DEBUG'] = '1'
 bash
-import os
-os.environ['FLASK_DEBUG'] = '1'
+export FLASK_DEBUG=1;
