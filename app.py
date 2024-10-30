@@ -107,5 +107,7 @@ def collect_news():
         return jsonify({'error': str(e)}), 500
 
 # Update your environment variable setting
-```bash
-export FLASK_DEBUG=1
+import os
+os.environ['FLASK_DEBUG'] = '1'
+bash
+export FLASK_DEBUG=1;
