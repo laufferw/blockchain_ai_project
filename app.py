@@ -3,10 +3,9 @@ from blockchain import Blockchain
 from fake_news_detector import FakeNewsDetector
 
 app = Flask(__name__)
-
-blockchain = Blockchain()
+# At the top of your app.py where you initialize your objects
 detector = FakeNewsDetector()
-
+blockchain = Blockchain(detector=detector)  # Pass the detector to Blockchain
 @app.route('/')
 def index():
     return render_template('index.html')
@@ -15,15 +14,18 @@ def index():
 def submit_data():
     try:
         values = request.get_json()
-
         required = ['author', 'content']
         if not all(k in values for k in required):
             return 'Missing values', 400
 
         verification = detector.predict(values['content'])
-
+        
+        # Add logging here
+        print(f"Values received: {values}")
+        print(f"Verification result: {verification}")
+        
         index = blockchain.new_data(values['author'], values['content'], verification)
-
+        
         last_proof = blockchain.last_block['proof']
         proof = blockchain.proof_of_work(last_proof)
         previous_hash = blockchain.hash(blockchain.last_block)
@@ -35,8 +37,8 @@ def submit_data():
         }
         return jsonify(response), 201
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
-@app.route('/chain', methods=['GET'])
+        print(f"Error in submit_data: {str(e)}")  # Add detailed error logging
+        return jsonify({'error': str(e)}), 500@app.route('/chain', methods=['GET'])
 def full_chain():
     response = {
         'chain': blockchain.chain,
@@ -66,9 +68,10 @@ from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 
 limiter = Limiter(
-    app,
+    app=app,  # Explicitly name the app parameter
     key_func=get_remote_address,
-    default_limits=["100 per day", "10 per hour"]
+    default_limits=["100 per day", "10 per hour"],
+    storage_uri="memory://"  # Adding storage configuration
 )
 
 @app.route('/api/key', methods=['POST'])
@@ -102,3 +105,7 @@ def collect_news():
         return jsonify(response), 201
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+
+# Update your environment variable setting
+```bash
+export FLASK_DEBUG=1
