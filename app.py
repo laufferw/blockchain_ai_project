@@ -13,27 +13,29 @@ def index():
 
 @app.route('/submit', methods=['POST'])
 def submit_data():
-    values = request.get_json()
+    try:
+        values = request.get_json()
 
-    required = ['author', 'content']
-    if not all(k in values for k in required):
-        return 'Missing values', 400
+        required = ['author', 'content']
+        if not all(k in values for k in required):
+            return 'Missing values', 400
 
-    verification = detector.predict(values['content'])
+        verification = detector.predict(values['content'])
 
-    index = blockchain.new_data(values['author'], values['content'], verification)
+        index = blockchain.new_data(values['author'], values['content'], verification)
 
-    last_proof = blockchain.last_block['proof']
-    proof = blockchain.proof_of_work(last_proof)
-    previous_hash = blockchain.hash(blockchain.last_block)
-    block = blockchain.new_block(proof, previous_hash)
+        last_proof = blockchain.last_block['proof']
+        proof = blockchain.proof_of_work(last_proof)
+        previous_hash = blockchain.hash(blockchain.last_block)
+        block = blockchain.new_block(proof, previous_hash)
 
-    response = {
-        'message': f'Data will be added to Block {index}',
-        'block': block,
-    }
-    return jsonify(response), 201
-
+        response = {
+            'message': f'Data will be added to Block {index}',
+            'block': block,
+        }
+        return jsonify(response), 201
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 @app.route('/chain', methods=['GET'])
 def full_chain():
     response = {
